@@ -111,9 +111,8 @@ QList<QPair<QString, QString>> dictionary::translate(
       break;
   }
   // calculate scores for each match
-  QVector<int> hits(results.size());
+  QVector<int> hits(results.begin(), results.end());
   QVector<int> scores(results.size(), 0);
-  std::copy(results.begin(), results.end(), hits.begin());
   // combine query words successfully into a string and check if
   // match contains this string, if yes increase score, in particular,
   // when match starts with this string
@@ -145,11 +144,11 @@ QList<QPair<QString, QString>> dictionary::translate(
   // indirect sort according to scores
   QVector<int> indices(results.size());
   std::iota(indices.begin(), indices.end(), 0);
-  std::sort(indices.begin(), indices.end(), [&](int a, int b) -> bool {
-    return scores[a] == scores[b]
-               ? QString(dict_a[hits[a]])
-                         .compare(QString(dict_a[hits[b]]), Qt::CaseInsensitive) <= 0
-               : scores[a] > scores[b];
+  std::stable_sort(indices.begin(), indices.end(), [&](const int a, const int b) -> bool {
+    return (scores[a] == scores[b])
+               ? (QString::compare(QString(dict_a[hits[a]]), QString(dict_a[hits[b]]),
+                                   Qt::CaseInsensitive) <= 0)
+               : (scores[a] > scores[b]);
   });
   // generate sorted results
   QList<QPair<QString, QString>> result;
