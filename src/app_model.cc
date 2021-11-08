@@ -19,6 +19,18 @@ app_model::app_model(QObject* parent)
 }
 
 
+void app_model::load(const QUrl& filename) {
+  try {
+    dict_.read(filename.toLocalFile());
+  } catch (...) {
+    dict_.clear();
+  }
+  query_string_ = "";
+  emit queryStringChanged();
+  set_query_string("");
+}
+
+
 void app_model::set_query_string(const QString& query_string) {
   query_string_ = query_string;
   translations_->translate(query_string_);

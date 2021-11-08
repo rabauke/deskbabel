@@ -1,6 +1,8 @@
+import QtCore
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
+import QtQuick.Dialogs
 import DeskBabel.QmlComponents
 
 ApplicationWindow {
@@ -14,6 +16,10 @@ ApplicationWindow {
   AppModel {
     id: application
     queryString: searchfield.text
+
+    onQueryStringChanged: {
+      searchfield.text = queryString;
+    }
   }
   Item {
     anchors.bottomMargin: 8
@@ -111,6 +117,35 @@ ApplicationWindow {
         text: section
         width: parent.width
         wrapMode: TextEdit.Wrap
+      }
+    }
+  }
+  FileDialog {
+    id: fileDialog
+    currentFolder: StandardPaths.standardLocations(StandardPaths.AppDataLocation)[0]
+    modality: Qt.WindowModal
+    title: qsTr('Please choose a dictionary')
+
+    onAccepted: {
+      application.load(fileDialog.selectedFile);
+    }
+  }
+
+  menuBar: MenuBar {
+    id: menuBar
+    Menu {
+      id: fileMenu
+      title: qsTr("File")
+
+      MenuItem {
+        text: qsTr("Load dictionary")
+
+        onTriggered: fileDialog.open()
+      }
+      MenuItem {
+        text: qsTr("Close")
+
+        onTriggered: root.close()
       }
     }
   }

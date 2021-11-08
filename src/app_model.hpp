@@ -14,10 +14,12 @@ class app_model : public QObject {
 public:
   explicit app_model(QObject* parent = nullptr);
 
+  Q_INVOKABLE void load(const QUrl &filename);
+
 private:
   dictionary dict_;
 
-  Q_PROPERTY(QString queryString READ get_query_string WRITE set_query_string)
+  Q_PROPERTY(QString queryString READ get_query_string WRITE set_query_string  NOTIFY queryStringChanged)
   QString query_string_;
   QString get_query_string() const { return query_string_; }
   void set_query_string(const QString& query_string);
@@ -32,6 +34,7 @@ private:
   bool get_dictionary_ready() const { return dictionary_ready_; }
 
 signals:
+  void queryStringChanged();
   void translationsChanged();
   void dictionaryReadyChanged();
 };
