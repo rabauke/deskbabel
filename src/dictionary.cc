@@ -48,8 +48,6 @@ void dictionary::read(const QString &filename) {
   }
   dict_a_.squeeze();
   dict_b_.squeeze();
-  map_a_.squeeze();
-  map_b_.squeeze();
   if (dict_a_.empty() or dict_b_.empty())
     throw std::runtime_error("empty dictionary");
 }
@@ -82,7 +80,7 @@ QList<QPair<QString, QString>> dictionary::translate_b_to_a(const QString &query
 
 QList<QPair<QString, QString>> dictionary::translate(
     const QString &query, const QVector<QByteArray> &dict_a, const QVector<QByteArray> &dict_b,
-    const QMultiHash<QByteArray, int> &map_a) const {
+    const QMultiMap<QByteArray, int> &map_a) const {
   // remove non-letters from query and split into single words
   QStringList query_list{purify(query).split(' ', Qt::SkipEmptyParts)};
   // no results if no words in query
@@ -91,20 +89,26 @@ QList<QPair<QString, QString>> dictionary::translate(
   // construct intersection of all matches for each single query word
   QSet<int> results;
   {
-    auto i{map_a.find(query_list[0].toUtf8())};
-    while (i != map_a.end() and i.key() == query_list[0]) {
+    auto i{map_a.lowerBound(query_list[0].toUtf8())};
+    while (i != map_a.end() and
+           (i.key() == query_list[0] or QString(i.key()).startsWith(QString(query_list[0])))) {
       results.insert(*i);
       ++i;
+      if (results.size() >= 4 * max_num_results_)
+        break;
     }
   }
   for (int k{1}; k < query_list.size(); ++k) {
     QSet<int> further_results;
-    auto i{map_a.find(query_list[k].toUtf8())};
-    while (i != map_a.end() and i.key() == query_list[k]) {
+    auto i{map_a.lowerBound(query_list[k].toUtf8())};
+    while (i != map_a.end() and
+           (i.key() == query_list[k] or QString(i.key()).startsWith(QString(query_list[k])))) {
       further_results.insert(*i);
       ++i;
     }
     results.intersect(further_results);
+    if (results.size() >= 4 * max_num_results_)
+      break;
   }
   // calculate scores for each match
   QVector<int> hits(results.size());
@@ -141,8 +145,12 @@ QList<QPair<QString, QString>> dictionary::translate(
   // indirect sort according to scores
   QVector<int> indices(results.size());
   std::iota(indices.begin(), indices.end(), 0);
-  std::sort(indices.begin(), indices.end(),
-            [&](int a, int b) -> bool { return scores[a] > scores[b]; });
+  std::sort(indices.begin(), indices.end(), [&](int a, int b) -> bool {
+    return scores[a] == scores[b]
+               ? QString(dict_a[hits[a]])
+                         .compare(QString(dict_a[hits[b]]), Qt::CaseInsensitive) <= 0
+               : scores[a] > scores[b];
+  });
   // generate sorted results
   QList<QPair<QString, QString>> result;
   for (auto i : indices) {
