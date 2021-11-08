@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(DeskBabel VERSION 0.1 LANGUAGES CXX)
+project(DeskBabel VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -28,6 +28,8 @@ set(PROJECT_SOURCES
         qml.qrc
         ${TS_FILES}
         )
+
+configure_file(version.hpp.in version.hpp @ONLY)
 
 qt_add_executable(DeskBabel
         MANUAL_FINALIZATION

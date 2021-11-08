@@ -5,12 +5,17 @@
 #include <QTranslator>
 #include <QQmlContext>
 
+#include "version.hpp"
 #include "app_model.hpp"
 #include "translations_list_model.hpp"
 
 
 int main(int argc, char *argv[]) {
+  const QVersionNumber applicationVersion(version_major, version_minor, version_patch);
   QCoreApplication::setApplicationName(QStringLiteral("DeskBabel"));
+  // QCoreApplication::setOrganizationName(QStringLiteral(""));
+  // QCoreApplication::setOrganizationDomain(QStringLiteral("t"));
+  QCoreApplication::setApplicationVersion(applicationVersion.toString());
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -37,8 +42,8 @@ int main(int argc, char *argv[]) {
   QObject::connect(
       &engine, &QQmlApplicationEngine::objectCreated, &app,
       [url](QObject *obj, const QUrl &obj_url) {
-        if (obj == nullptr and url == obj_url)
-          QCoreApplication::exit(-1);
+    if (obj == nullptr and url == obj_url)
+      QCoreApplication::exit(-1);
       },
       Qt::QueuedConnection);
   engine.load(url);
