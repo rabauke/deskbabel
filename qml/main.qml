@@ -16,10 +16,6 @@ ApplicationWindow {
   AppModel {
     id: application
     queryString: searchfield.text
-
-    onQueryStringChanged: {
-      searchfield.text = queryString;
-    }
   }
   Item {
     anchors.bottomMargin: 8
@@ -127,6 +123,7 @@ ApplicationWindow {
     title: qsTr('Please choose a dictionary')
 
     onAccepted: {
+      searchfield.text = ''
       application.load(fileDialog.selectedFile);
     }
   }

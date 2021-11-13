@@ -25,9 +25,6 @@ void app_model::load(const QUrl& filename) {
   } catch (...) {
     dict_.clear();
   }
-  query_string_ = "";
-  emit queryStringChanged();
-  set_query_string("");
 }
 
 
