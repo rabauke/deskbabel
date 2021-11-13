@@ -39,42 +39,7 @@ int translations_list_model::count() const {
   return data_.count();
 }
 
-// QColor translations_list_model::get(int index) {
-//   if (index < 0 || index >= data_.count())
-//     return {};
-//   return data_.at(index);
-// }
-//
-//
-// void translations_list_model::insert(int index, const QString &colorValue) {
-//   if (index < 0 || index > data_.count())
-//     return;
-//   QColor color(colorValue);
-//   if (!color.isValid())
-//     return;
-//   // view protocol (begin => manipulate => end]
-//   emit beginInsertRows(QModelIndex(), index, index);
-//   data_.insert(index, color);
-//   emit endInsertRows();
-//   emit countChanged(data_.count());
-// }
-//
-//
-// void translations_list_model::append(const QString &colorValue) {
-//   insert(data_.size(), colorValue);
-// }
-//
-//
-// void translations_list_model::remove(int index) {
-//   if (index < 0 || index >= data_.count())
-//     return;
-//   emit beginRemoveRows(QModelIndex(), index, index);
-//   data_.removeAt(index);
-//   emit endRemoveRows();
-//   emit countChanged(data_.count());
-// }
-//
-//
+
 void translations_list_model::translate(const QString &query) {
   clear();
   auto new_query{query};
@@ -91,6 +56,7 @@ void translations_list_model::translate(const QString &query) {
     emit countChanged(data_.count());
   }
 }
+
 
 void translations_list_model::clear() {
   if (!data_.empty()) {
