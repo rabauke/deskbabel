@@ -1,4 +1,7 @@
 #include "app_model.hpp"
+#include <QFuture>
+#include <QFutureWatcher>
+#include <QtConcurrent>
 
 app_model::app_model(QObject* parent)
     : QObject{parent}, translations_(new translations_list_model(dict_)) {
@@ -20,11 +23,25 @@ app_model::app_model(QObject* parent)
 
 
 void app_model::load(const QUrl& filename) {
-  try {
-    dict_.read(filename.toLocalFile());
-  } catch (...) {
-    dict_.clear();
-  }
+  dictionary_ready_ = false;
+  emit dictionaryReadyChanged();
+
+  auto readImageWorker = [this](const QUrl& filename) {
+    try {
+      dict_.read(filename.toLocalFile());
+    } catch (...) {
+      dict_.clear();
+    }
+  };
+
+  QFuture<void> future{QtConcurrent::run(readImageWorker, filename)};
+  auto* watcher{new QFutureWatcher<void>()};
+  connect(watcher, &QFutureWatcher<void>::finished, [this, watcher]() {
+    dictionary_ready_ = true;
+    emit dictionaryReadyChanged();
+    delete watcher;
+  });
+  watcher->setFuture(future);
 }
 
 

@@ -116,6 +116,10 @@ ApplicationWindow {
       }
     }
   }
+  BusyIndicator {
+    running: !application.dictionaryReady
+    anchors.centerIn: parent
+  }
   FileDialog {
     id: fileDialog
     currentFolder: StandardPaths.standardLocations(StandardPaths.AppDataLocation)[0]
