@@ -23,25 +23,27 @@ app_model::app_model(QObject* parent)
 
 
 void app_model::load(const QUrl& filename) {
-  dictionary_ready_ = false;
-  emit dictionaryReadyChanged();
-
-  auto readImageWorker = [this](const QUrl& filename) {
-    try {
-      dict_.read(filename.toLocalFile());
-    } catch (...) {
-      dict_.clear();
-    }
-  };
-
-  QFuture<void> future{QtConcurrent::run(readImageWorker, filename)};
-  auto* watcher{new QFutureWatcher<void>()};
-  connect(watcher, &QFutureWatcher<void>::finished, [this, watcher]() {
-    dictionary_ready_ = true;
+  if (not read_dictionary_future_.isRunning()) {
+    dictionary_ready_ = false;
     emit dictionaryReadyChanged();
-    delete watcher;
-  });
-  watcher->setFuture(future);
+
+    auto read_dictionary_worker{[this](const QUrl& filename) {
+      try {
+        dict_.read(filename.toLocalFile());
+      } catch (...) {
+        dict_.clear();
+      }
+    }};
+
+    read_dictionary_future_ = QtConcurrent::run(read_dictionary_worker, filename);
+    auto* watcher{new QFutureWatcher<void>()};
+    connect(watcher, &QFutureWatcher<void>::finished, [this, watcher]() {
+      dictionary_ready_ = true;
+      emit dictionaryReadyChanged();
+      delete watcher;
+    });
+    watcher->setFuture(read_dictionary_future_);
+  }
 }
 
 
