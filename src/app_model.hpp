@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QString>
-#include <QtDebug>
+#include <QScopedPointer>
 #include <QStringListModel>
 #include "dictionary.hpp"
 #include "translations_list_model.hpp"
@@ -14,7 +14,7 @@ class app_model : public QObject {
 public:
   explicit app_model(QObject* parent = nullptr);
 
-  Q_INVOKABLE void load(const QUrl &filename);
+  Q_INVOKABLE void load(const QUrl& filename);
 
 private:
   dictionary dict_;
@@ -24,10 +24,12 @@ private:
   [[nodiscard]] QString get_query_string() const { return query_string_; }
   void set_query_string(const QString& query_string);
 
-  Q_PROPERTY(QSharedPointer<translations_list_model> translations READ get_translations NOTIFY
-                 translationsChanged)
-  QSharedPointer<translations_list_model> translations_;
-  [[nodiscard]] QSharedPointer<translations_list_model> get_translations() const { return translations_; }
+  Q_PROPERTY(
+      const translations_list_model* translations READ get_translations NOTIFY translationsChanged)
+  QScopedPointer<translations_list_model> translations_;
+  [[nodiscard]] const translations_list_model* get_translations() const {
+    return translations_.get();
+  }
 
   Q_PROPERTY(bool dictionaryReady READ get_dictionary_ready NOTIFY dictionaryReadyChanged)
   bool dictionary_ready_{false};
