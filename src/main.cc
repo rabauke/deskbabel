@@ -12,15 +12,12 @@
 
 int main(int argc, char *argv[]) {
   const QVersionNumber applicationVersion(version_major, version_minor, version_patch);
-  QCoreApplication::setApplicationName(QStringLiteral("DeskBabel"));
-  // QCoreApplication::setOrganizationName(QStringLiteral(""));
-  // QCoreApplication::setOrganizationDomain(QStringLiteral("t"));
-  QCoreApplication::setApplicationVersion(applicationVersion.toString());
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
   QGuiApplication app(argc, argv);
+  app.setApplicationName(QStringLiteral("DeskBabel"));
+  // app.setOrganizationName(QStringLiteral(""));
+  // app.setOrganizationDomain(QStringLiteral("t"));
+  app.setApplicationVersion(applicationVersion.toString());
 
   QTranslator translator;
   const QStringList ui_languages{QLocale::system().uiLanguages()};
@@ -42,8 +39,8 @@ int main(int argc, char *argv[]) {
   QObject::connect(
       &engine, &QQmlApplicationEngine::objectCreated, &app,
       [url](QObject *obj, const QUrl &obj_url) {
-    if (obj == nullptr and url == obj_url)
-      QCoreApplication::exit(-1);
+        if (obj == nullptr and url == obj_url)
+          QCoreApplication::exit(-1);
       },
       Qt::QueuedConnection);
   engine.load(url);
