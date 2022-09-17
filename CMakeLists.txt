@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.23)
 
 project(DeskBabel VERSION 0.1.0 LANGUAGES CXX)
 
@@ -11,8 +11,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick LinguistTools Concurrent REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick LinguistTools Concurrent REQUIRED)
+find_package(Qt6 COMPONENTS Core Quick LinguistTools Concurrent REQUIRED)
 
 set(TS_FILES i18n/DeskBabel_de_DE.ts)
 
@@ -31,17 +30,13 @@ set(PROJECT_SOURCES
 
 configure_file(version.hpp.in version.hpp @ONLY)
 
-qt_add_executable(DeskBabel
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-        )
+qt_add_executable(DeskBabel ${PROJECT_SOURCES})
 
 qt_add_translations(DeskBabel TS_FILES ${TS_FILES})
 
 target_compile_definitions(DeskBabel
         PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(DeskBabel
-        PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Concurrent)
+target_link_libraries(DeskBabel PRIVATE Qt::Core Qt::Quick Qt::Concurrent)
 
 set_target_properties(DeskBabel PROPERTIES
         MACOSX_BUNDLE_GUI_IDENTIFIER DeskBabel
@@ -50,7 +45,6 @@ set_target_properties(DeskBabel PROPERTIES
         )
 
 qt_import_qml_plugins(DeskBabel)
-qt_finalize_executable(DeskBabel)
 
 install(TARGETS DeskBabel DESTINATION ${CMAKE_INSTALL_BINDIR})
 # install(IMPORTED_RUNTIME_ARTIFACTS DeskBabel DESTINATION ${CMAKE_INSTALL_LIBDIR})
