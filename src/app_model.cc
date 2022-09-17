@@ -16,6 +16,7 @@ app_model::app_model(QObject* parent)
         dict_.clear();
       }
       dictionary_ready_ = true;
+      emit dictionaryReadyChanged();
       break;
     }
   }
