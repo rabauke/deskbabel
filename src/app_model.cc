@@ -5,25 +5,10 @@
 
 app_model::app_model(QObject* parent)
     : QObject{parent}, translations_(new translations_list_model(dict_)) {
-  const auto locations{QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)};
-  for (const auto& a : locations) {
-    const auto filename{a + "/dictionary.txt"};
-    if (QFile::exists(filename)) {
-      dictionary_ready_ = false;
-      try {
-        dict_.read(filename);
-      } catch (...) {
-        dict_.clear();
-      }
-      dictionary_ready_ = true;
-      emit dictionaryReadyChanged();
-      break;
-    }
-  }
 }
 
 
-void app_model::load(const QUrl& filename) {
+void app_model::load_dictionary(const QUrl& filename) {
   if (not read_dictionary_future_.isRunning()) {
     dictionary_ready_ = false;
     emit dictionaryReadyChanged();
@@ -44,6 +29,18 @@ void app_model::load(const QUrl& filename) {
       delete watcher;
     });
     watcher->setFuture(read_dictionary_future_);
+  }
+}
+
+
+void app_model::load_default_dictionary() {
+  const auto locations{QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)};
+  for (const auto& a : locations) {
+    const auto filename{a + "/dictionary.txt"};
+    if (QFile::exists(filename)) {
+      load_dictionary("file://" + filename);
+      break;
+    }
   }
 }
 

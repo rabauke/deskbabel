@@ -11,10 +11,12 @@
 
 class app_model : public QObject {
   Q_OBJECT
+
 public:
   explicit app_model(QObject* parent = nullptr);
 
-  Q_INVOKABLE void load(const QUrl& filename);
+  Q_INVOKABLE void load_dictionary(const QUrl& filename);
+  Q_INVOKABLE void load_default_dictionary();
 
 private:
   dictionary dict_;
@@ -36,6 +38,7 @@ private:
   [[nodiscard]] bool get_dictionary_ready() const { return dictionary_ready_; }
 
   QFuture<void> read_dictionary_future_;
+
 signals:
   void translationsChanged();
   void dictionaryReadyChanged();

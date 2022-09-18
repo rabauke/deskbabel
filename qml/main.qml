@@ -13,6 +13,29 @@ ApplicationWindow {
   visible: true
   width: 480
 
+  menuBar: MenuBar {
+    id: menuBar
+    Menu {
+      id: fileMenu
+      title: qsTr("File")
+
+      MenuItem {
+        text: qsTr("Load dictionary")
+
+        onTriggered: fileDialog.open()
+      }
+      MenuItem {
+        text: qsTr("Close")
+
+        onTriggered: root.close()
+      }
+    }
+  }
+
+  Component.onCompleted: {
+    application.load_default_dictionary();
+  }
+
   AppModel {
     id: application
     queryString: searchfield.text
@@ -117,8 +140,8 @@ ApplicationWindow {
     }
   }
   BusyIndicator {
-    running: !application.dictionaryReady
     anchors.centerIn: parent
+    running: !application.dictionaryReady
   }
   FileDialog {
     id: fileDialog
@@ -127,27 +150,8 @@ ApplicationWindow {
     title: qsTr('Please choose a dictionary')
 
     onAccepted: {
-      searchfield.text = ''
-      application.load(fileDialog.selectedFile);
-    }
-  }
-
-  menuBar: MenuBar {
-    id: menuBar
-    Menu {
-      id: fileMenu
-      title: qsTr("File")
-
-      MenuItem {
-        text: qsTr("Load dictionary")
-
-        onTriggered: fileDialog.open()
-      }
-      MenuItem {
-        text: qsTr("Close")
-
-        onTriggered: root.close()
-      }
+      searchfield.text = '';
+      application.load_dictionary(fileDialog.selectedFile);
     }
   }
 }
