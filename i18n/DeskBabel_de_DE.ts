@@ -23,5 +23,9 @@
         <source>Load dictionary</source>
         <translation>Wörterbuch laden</translation>
     </message>
+    <message>
+        <source>Dictionary size: %1 translations</source>
+        <translation>Wörterbuchgröße: %1 Übersetzungen</translation>
+    </message>
 </context>
 </TS>

@@ -26,7 +26,7 @@ class dictionary {
 public:
   dictionary() = default;
   void read(const QString &filename);
-  [[nodiscard]] int size() const;
+  [[nodiscard]] qsizetype size() const;
   void clear();
   [[nodiscard]] bool dict_empty() const { return dict_a_.empty() or dict_b_.empty(); }
   [[nodiscard]] QList<QPair<QString, QString>> translate_a_to_b(const QString &query) const;

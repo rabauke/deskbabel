@@ -53,7 +53,7 @@ void dictionary::read(const QString &filename) {
 }
 
 
-int dictionary::size() const {
+qsizetype dictionary::size() const {
   return dict_a_.size();
 }
 

@@ -25,7 +25,9 @@ void app_model::load_dictionary(const QUrl& filename) {
     auto* watcher{new QFutureWatcher<void>()};
     connect(watcher, &QFutureWatcher<void>::finished, [this, watcher]() {
       dictionary_ready_ = true;
+      dictionary_size_ = dict_.size();
       emit dictionaryReadyChanged();
+      emit dictionarySizeChanged();
       delete watcher;
     });
     watcher->setFuture(read_dictionary_future_);

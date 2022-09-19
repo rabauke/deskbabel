@@ -37,11 +37,16 @@ private:
   bool dictionary_ready_{false};
   [[nodiscard]] bool get_dictionary_ready() const { return dictionary_ready_; }
 
+  Q_PROPERTY(qsizetype dictionarySize READ get_dictionary_size NOTIFY dictionarySizeChanged)
+  qsizetype dictionary_size_{0};
+  [[nodiscard]] qsizetype get_dictionary_size() const { return dictionary_size_; }
+
   QFuture<void> read_dictionary_future_;
 
 signals:
   void translationsChanged();
   void dictionaryReadyChanged();
+  void dictionarySizeChanged();
 };
 
 #endif

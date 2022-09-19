@@ -3,16 +3,38 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Dialogs
+import QtQuick.Layouts
 import DeskBabel.QmlComponents
 
 ApplicationWindow {
   id: root
+
+  readonly property int horizontalMargin: 12
+
   height: 720
   minimumHeight: 360
   minimumWidth: 480
   visible: true
   width: 480
 
+  footer: ToolBar {
+    height: 1.25 * label.height
+
+    RowLayout {
+      anchors.fill: parent
+      anchors.leftMargin: horizontalMargin
+      anchors.rightMargin: horizontalMargin
+
+      Label {
+        id: label
+        Layout.fillWidth: true
+        elide: Label.ElideRight
+        horizontalAlignment: Qt.AlignLeft
+        text: qsTr('Dictionary size: %1 translations').arg(Number(application.dictionarySize).toLocaleString(Qt.locale(), 'f', 0))
+        verticalAlignment: Qt.AlignVCenter
+      }
+    }
+  }
   menuBar: MenuBar {
     id: menuBar
     Menu {
@@ -20,6 +42,7 @@ ApplicationWindow {
       title: qsTr("File")
 
       MenuItem {
+        enabled: application.dictionaryReady
         text: qsTr("Load dictionary")
 
         onTriggered: fileDialog.open()
@@ -43,8 +66,8 @@ ApplicationWindow {
   Item {
     anchors.bottomMargin: 8
     anchors.fill: parent
-    anchors.leftMargin: 12
-    anchors.rightMargin: 12
+    anchors.leftMargin: horizontalMargin
+    anchors.rightMargin: horizontalMargin
     anchors.topMargin: 8
 
     TextField {
@@ -61,7 +84,7 @@ ApplicationWindow {
       id: clear
       anchors.right: parent.right
       height: clearSign.height
-      width: clearSign.width + 12
+      width: clearSign.width + horizontalMargin
 
       Text {
         id: clearSign
