@@ -21,6 +21,10 @@ public:
 private:
   dictionary dict_;
 
+  Q_PROPERTY(QUrl currentFolder READ get_current_folder NOTIFY currentFolderChanged)
+  QUrl current_folder_;
+  [[nodiscard]] QUrl get_current_folder() const { return current_folder_; }
+
   Q_PROPERTY(QString queryString READ get_query_string WRITE set_query_string)
   QString query_string_;
   [[nodiscard]] QString get_query_string() const { return query_string_; }
@@ -44,6 +48,7 @@ private:
   QFuture<void> read_dictionary_future_;
 
 signals:
+  void currentFolderChanged();
   void translationsChanged();
   void dictionaryReadyChanged();
   void dictionarySizeChanged();

@@ -2,9 +2,22 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QtConcurrent>
+#include <QSettings>
+#include <QStandardPaths>
+
 
 app_model::app_model(QObject* parent)
     : QObject{parent}, translations_(new translations_list_model(dict_)) {
+  QSettings settings;
+  const QVariant dictionary{settings.value("dictionary")};
+  if (dictionary.canConvert<QUrl>())
+    current_folder_ = dictionary.toUrl().adjusted(QUrl::RemoveFilename);
+  else {
+    const QStringList folders{
+        QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)};
+    if (not folders.isEmpty())
+      current_folder_ = QUrl::fromLocalFile(folders[0]);
+  }
 }
 
 
@@ -16,6 +29,9 @@ void app_model::load_dictionary(const QUrl& filename) {
     auto read_dictionary_worker{[this](const QUrl& filename) {
       try {
         dict_.read(filename.toLocalFile());
+        QSettings settings;
+        settings.setValue("dictionary", filename);
+        current_folder_ = filename.adjusted(QUrl::RemoveFilename);
       } catch (...) {
         dict_.clear();
       }
@@ -28,6 +44,7 @@ void app_model::load_dictionary(const QUrl& filename) {
       dictionary_size_ = dict_.size();
       emit dictionaryReadyChanged();
       emit dictionarySizeChanged();
+      emit currentFolderChanged();
       delete watcher;
     });
     watcher->setFuture(read_dictionary_future_);
@@ -36,13 +53,15 @@ void app_model::load_dictionary(const QUrl& filename) {
 
 
 void app_model::load_default_dictionary() {
-  const auto locations{QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)};
-  for (const auto& a : locations) {
-    const auto filename{a + "/dictionary.txt"};
-    if (QFile::exists(filename)) {
-      load_dictionary("file://" + filename);
-      break;
-    }
+  QSettings settings;
+  const QVariant dictionary{settings.value("dictionary")};
+  if (dictionary.canConvert<QUrl>())
+    load_dictionary(dictionary.toUrl());
+  else {
+    dictionary_ready_ = true;
+    dictionary_size_ = dict_.size();
+    emit dictionaryReadyChanged();
+    emit dictionarySizeChanged();
   }
 }
 

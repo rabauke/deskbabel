@@ -4,6 +4,7 @@
 #include <QLocale>
 #include <QTranslator>
 #include <QQmlContext>
+#include <QString>
 
 #include "version.hpp"
 #include "app_model.hpp"
@@ -14,9 +15,9 @@ int main(int argc, char *argv[]) {
   const QVersionNumber applicationVersion(version_major, version_minor, version_patch);
 
   QGuiApplication app(argc, argv);
-  app.setApplicationName(QStringLiteral("DeskBabel"));
-  // app.setOrganizationName(QStringLiteral(""));
-  // app.setOrganizationDomain(QStringLiteral("t"));
+  app.setApplicationName(u"DeskBabel"_qs);
+  app.setOrganizationName(u"Heiko Bauke"_qs);
+  app.setOrganizationDomain(u"heiko.bauke"_qs);
   app.setApplicationVersion(applicationVersion.toString());
 
   QTranslator translator;

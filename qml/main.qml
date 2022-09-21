@@ -77,7 +77,7 @@ ApplicationWindow {
       anchors.top: parent.top
       font.pixelSize: 18
       placeholderText: application.dictionaryReady ? qsTr('enter search') : ''
-      readOnly: !application.dictionaryReady
+      readOnly: (!application.dictionaryReady) || (application.dictionarySize == 0)
       text: ''
     }
     Item {
@@ -168,7 +168,7 @@ ApplicationWindow {
   }
   FileDialog {
     id: fileDialog
-    currentFolder: StandardPaths.standardLocations(StandardPaths.AppDataLocation)[0]
+    currentFolder: application.currentFolder
     modality: Qt.WindowModal
     title: qsTr('Please choose a dictionary')
 
