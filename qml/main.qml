@@ -18,7 +18,7 @@ ApplicationWindow {
   width: 480
 
   footer: ToolBar {
-    height: 1.25 * label.height
+    height: 1.5 * label.height
 
     RowLayout {
       anchors.fill: parent
@@ -126,7 +126,7 @@ ApplicationWindow {
           anchors.topMargin: 4
           color: Material.foreground
           font.italic: false
-          font.pixelSize: 16
+          font.pixelSize: 14
           readOnly: true
           selectByMouse: true
           text: model.source
@@ -140,7 +140,7 @@ ApplicationWindow {
           anchors.topMargin: 3
           color: Material.foreground
           font.italic: true
-          font.pixelSize: 16
+          font.pixelSize: 14
           readOnly: true
           selectByMouse: true
           text: model.translation
@@ -153,7 +153,6 @@ ApplicationWindow {
         anchors.topMargin: 3
         color: Material.accent
         font.italic: false
-        font.pixelSize: 16
         horizontalAlignment: TextEdit.AlignHCenter
         readOnly: true
         text: section
