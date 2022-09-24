@@ -31,6 +31,7 @@ set(PROJECT_SOURCES
 configure_file(version.hpp.in version.hpp @ONLY)
 
 qt_add_executable(DeskBabel ${PROJECT_SOURCES})
+target_include_directories(DeskBabel PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 qt_add_translations(DeskBabel TS_FILES ${TS_FILES})
 
@@ -44,7 +45,11 @@ set_target_properties(DeskBabel PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     )
 
-qt_import_qml_plugins(DeskBabel)
+qt_add_qml_module(DeskBabel
+    URI DeskBabelQuick
+    VERSION 1.0
+    NO_RESOURCE_TARGET_PATH
+)
 
 install(TARGETS DeskBabel DESTINATION ${CMAKE_INSTALL_BINDIR})
 # install(IMPORTED_RUNTIME_ARTIFACTS DeskBabel DESTINATION ${CMAKE_INSTALL_LIBDIR})

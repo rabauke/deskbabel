@@ -4,7 +4,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Dialogs
 import QtQuick.Layouts
-import DeskBabel.QmlComponents
+import DeskBabelQuick
 
 ApplicationWindow {
   id: root

@@ -5,6 +5,7 @@
 #include <QString>
 #include <QScopedPointer>
 #include <QStringListModel>
+#include <QtQmlIntegration>
 #include "dictionary.hpp"
 #include "translations_list_model.hpp"
 
@@ -44,6 +45,8 @@ private:
   Q_PROPERTY(qsizetype dictionarySize READ get_dictionary_size NOTIFY dictionarySizeChanged)
   qsizetype dictionary_size_{0};
   [[nodiscard]] qsizetype get_dictionary_size() const { return dictionary_size_; }
+
+  QML_NAMED_ELEMENT(AppModel)
 
   QFuture<void> read_dictionary_future_;
 

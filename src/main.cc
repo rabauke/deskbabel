@@ -1,13 +1,11 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QStandardPaths>
 #include <QLocale>
 #include <QTranslator>
 #include <QQmlContext>
 #include <QString>
 
 #include "version.hpp"
-#include "app_model.hpp"
 #include "translations_list_model.hpp"
 
 
@@ -29,11 +27,6 @@ int main(int argc, char *argv[]) {
       break;
     }
   }
-
-  // https://doc.qt.io/qt-6/qtqml-modules-cppplugins.html
-  // https://github.com/sailfishos-mirror/qtdeclarative/tree/dev/tests/auto/qml/qmlbasicapp
-  qmlRegisterType<app_model>("DeskBabel.QmlComponents", 1, 0, "AppModel");
-  qmlRegisterType<translations_list_model>("DeskBabel.QmlComponents", 1, 0, "DataEntryModel");
 
   QQmlApplicationEngine engine;
   const QUrl url{QStringLiteral("qrc:/qml/main.qml")};

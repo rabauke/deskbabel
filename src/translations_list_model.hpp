@@ -3,6 +3,7 @@
 
 #include <QtCore>
 #include <QtGui>
+#include <QtQmlIntegration>
 #include "dictionary.hpp"
 
 
@@ -25,6 +26,8 @@ public:
 
   Q_INVOKABLE void translate(const QString &query);
   Q_INVOKABLE void clear();
+
+  QML_NAMED_ELEMENT(DataEntryModel)
 
 signals:
   void countChanged(int);
