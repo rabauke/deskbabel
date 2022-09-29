@@ -77,7 +77,7 @@ ApplicationWindow {
       anchors.top: parent.top
       font.pixelSize: 18
       placeholderText: application.dictionaryReady ? qsTr('enter search') : ''
-      readOnly: (!application.dictionaryReady) || (application.dictionarySize == 0)
+      readOnly: (!application.dictionaryReady) || (application.dictionarySize === 0)
       text: ''
     }
     Item {
@@ -91,7 +91,7 @@ ApplicationWindow {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.topMargin: 6
-        color: searchfield.text == '' ? searchfield.placeholderTextColor : searchfield.color
+        color: searchfield.text === '' ? searchfield.placeholderTextColor : searchfield.color
         font.pixelSize: 20
         text: '⨂'
 
