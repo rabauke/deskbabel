@@ -10,12 +10,14 @@
 
 
 int main(int argc, char *argv[]) {
+  using namespace Qt::Literals::StringLiterals;
+
   const QVersionNumber applicationVersion(version_major, version_minor, version_patch);
 
   QGuiApplication app(argc, argv);
-  app.setApplicationName(u"DeskBabel"_qs);
-  app.setOrganizationName(u"Heiko Bauke"_qs);
-  app.setOrganizationDomain(u"heiko.bauke"_qs);
+  app.setApplicationName(u"DeskBabel"_s);
+  app.setOrganizationName(u"Heiko Bauke"_s);
+  app.setOrganizationDomain(u"heiko.bauke"_s);
   app.setApplicationVersion(applicationVersion.toString());
 
   QTranslator translator;
@@ -29,7 +31,7 @@ int main(int argc, char *argv[]) {
   }
 
   QQmlApplicationEngine engine;
-  const QUrl url{QStringLiteral("qrc:/qml/main.qml")};
+  const QUrl url{u"qrc:/qml/main.qml"_s};
   QObject::connect(
       &engine, &QQmlApplicationEngine::objectCreated, &app,
       [url](QObject *obj, const QUrl &obj_url) {
