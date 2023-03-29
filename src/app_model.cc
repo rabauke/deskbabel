@@ -21,7 +21,7 @@ app_model::app_model(QObject* parent)
 }
 
 
-void app_model::load_dictionary(const QUrl& filename) {
+void app_model::loadDictionary(const QUrl& filename) {
   if (not read_dictionary_future_.isRunning()) {
     dictionary_ready_ = false;
     emit dictionaryReadyChanged();
@@ -39,7 +39,7 @@ void app_model::load_dictionary(const QUrl& filename) {
 
     read_dictionary_future_ = QtConcurrent::run(read_dictionary_worker, filename);
     auto* watcher{new QFutureWatcher<void>()};
-    connect(watcher, &QFutureWatcher<void>::finished, [this, watcher]() {
+    connect(watcher, &QFutureWatcher<void>::finished, this, [this, watcher]() {
       dictionary_ready_ = true;
       dictionary_size_ = dict_.size();
       emit dictionaryReadyChanged();
@@ -52,11 +52,11 @@ void app_model::load_dictionary(const QUrl& filename) {
 }
 
 
-void app_model::load_default_dictionary() {
+void app_model::loadDefaultDictionary() {
   QSettings settings;
   const QVariant dictionary{settings.value("dictionary")};
   if (dictionary.canConvert<QUrl>())
-    load_dictionary(dictionary.toUrl());
+    loadDictionary(dictionary.toUrl());
   else {
     dictionary_ready_ = true;
     dictionary_size_ = dict_.size();

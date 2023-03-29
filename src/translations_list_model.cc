@@ -5,8 +5,7 @@ translations_list_model::translations_list_model(const dictionary &dict)
 }
 
 
-int translations_list_model::rowCount(const QModelIndex &parent) const {
-  Q_UNUSED(parent);
+int translations_list_model::rowCount([[maybe_unused]] const QModelIndex &parent) const {
   return data_.count();
 }
 
@@ -24,7 +23,7 @@ QVariant translations_list_model::data(const QModelIndex &index, int role) const
         return trans.category;
     }
   }
-  return QString("not found");
+  return {};
 }
 
 
@@ -47,12 +46,12 @@ void translations_list_model::translate(const QString &query) {
   auto result_1{dict_.translate_a_to_b(query)};
   auto result_2{dict_.translate_b_to_a(query)};
   if (result_1.count() + result_2.count() > 0) {
-    emit beginInsertRows(QModelIndex(), 0, result_1.count() + result_2.count() - 1);
+    beginInsertRows(QModelIndex(), 0, result_1.count() + result_2.count() - 1);
     for (const auto &q : result_1)
       data_.append(translation_type{q.first, q.second, dict_.language_a() + QStringLiteral(" → ") + dict_.language_b()});
     for (const auto &q : result_2)
       data_.append(translation_type{q.first, q.second, dict_.language_b() + QStringLiteral(" → ") + dict_.language_a()});
-    emit endInsertRows();
+    endInsertRows();
     emit countChanged(data_.count());
   }
 }
@@ -60,9 +59,9 @@ void translations_list_model::translate(const QString &query) {
 
 void translations_list_model::clear() {
   if (!data_.empty()) {
-    emit beginRemoveRows(QModelIndex(), 0, data_.count() - 1);
+    beginRemoveRows(QModelIndex(), 0, data_.count() - 1);
     data_.clear();
-    emit endRemoveRows();
+    endRemoveRows();
     emit countChanged(data_.count());
   }
 }

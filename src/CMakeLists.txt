@@ -6,6 +6,7 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Qt6 COMPONENTS Core Quick LinguistTools Concurrent REQUIRED)
 
@@ -44,7 +45,7 @@ qt_add_qml_module(DeskBabel
     URI DeskBabelQuick
     VERSION 1.0
     NO_RESOURCE_TARGET_PATH
-)
+    )
 
 install(TARGETS DeskBabel DESTINATION ${CMAKE_INSTALL_BINDIR})
 # install(IMPORTED_RUNTIME_ARTIFACTS DeskBabel DESTINATION ${CMAKE_INSTALL_LIBDIR})

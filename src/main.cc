@@ -6,7 +6,6 @@
 #include <QString>
 
 #include "version.hpp"
-#include "translations_list_model.hpp"
 
 
 int main(int argc, char *argv[]) {

@@ -56,7 +56,7 @@ ApplicationWindow {
   }
 
   Component.onCompleted: {
-    application.load_default_dictionary();
+    application.loadDefaultDictionary();
   }
 
   AppModel {
@@ -173,7 +173,7 @@ ApplicationWindow {
 
     onAccepted: {
       searchfield.text = '';
-      application.load_dictionary(fileDialog.selectedFile);
+      application.loadDictionary(fileDialog.selectedFile);
     }
   }
 }

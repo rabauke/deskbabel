@@ -15,11 +15,11 @@ private:
   static constexpr int category = Qt::UserRole + 2;
 
 public:
-  translations_list_model(const dictionary &dict);
-  ~translations_list_model() = default;
+  explicit translations_list_model(const dictionary &dict);
+  virtual ~translations_list_model() = default;
 
-  int rowCount(const QModelIndex &parent) const override;
-  QVariant data(const QModelIndex &index, int role) const override;
+  [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
+  [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
 
   // gives the size of the model
   Q_PROPERTY(int count READ count NOTIFY countChanged)

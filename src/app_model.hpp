@@ -16,8 +16,8 @@ class app_model : public QObject {
 public:
   explicit app_model(QObject* parent = nullptr);
 
-  Q_INVOKABLE void load_dictionary(const QUrl& filename);
-  Q_INVOKABLE void load_default_dictionary();
+  Q_INVOKABLE void loadDictionary(const QUrl& filename);
+  Q_INVOKABLE void loadDefaultDictionary();
 
 private:
   dictionary dict_;
@@ -26,7 +26,7 @@ private:
   QUrl current_folder_;
   [[nodiscard]] QUrl get_current_folder() const { return current_folder_; }
 
-  Q_PROPERTY(QString queryString READ get_query_string WRITE set_query_string)
+  Q_PROPERTY(QString queryString READ get_query_string WRITE set_query_string NOTIFY queryStringChanged)
   QString query_string_;
   [[nodiscard]] QString get_query_string() const { return query_string_; }
   void set_query_string(const QString& query_string);
@@ -52,6 +52,7 @@ private:
 
 signals:
   void currentFolderChanged();
+  void queryStringChanged();
   void translationsChanged();
   void dictionaryReadyChanged();
   void dictionarySizeChanged();
