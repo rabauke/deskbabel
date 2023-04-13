@@ -15,6 +15,7 @@ private:
   static constexpr int category = Qt::UserRole + 2;
 
 public:
+  explicit translations_list_model(QObject *other = nullptr);
   explicit translations_list_model(const dictionary &dict);
   virtual ~translations_list_model() = default;
 
@@ -44,7 +45,7 @@ private:
     QString category;
   };
 
-  const dictionary &dict_;
+  const dictionary *dict_{nullptr};
   QList<translation_type> data_;
 };
 
