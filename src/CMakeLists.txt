@@ -15,13 +15,13 @@ find_package(Qt6 COMPONENTS Core Quick LinguistTools Concurrent REQUIRED)
 set(TS_FILES i18n/DeskBabel_de_DE.ts)
 
 set(PROJECT_SOURCES
-    main.cc
+    main.cpp
     dictionary.hpp
-    dictionary.cc
+    dictionary.cpp
     app_model.hpp
-    app_model.cc
+    app_model.cpp
     translations_list_model.hpp
-    translations_list_model.cc
+    translations_list_model.cpp
     qml/main.qml
     application.qrc
     ${TS_FILES}
@@ -29,7 +29,7 @@ set(PROJECT_SOURCES
 
 configure_file(version.hpp.in version.hpp @ONLY)
 
-qt_add_executable(DeskBabel ${PROJECT_SOURCES})
+add_executable(DeskBabel ${PROJECT_SOURCES})
 
 qt_add_translations(DeskBabel TS_FILES ${TS_FILES})
 
@@ -38,6 +38,7 @@ target_compile_definitions(DeskBabel
 target_link_libraries(DeskBabel PRIVATE Qt::Core Qt::Quick Qt::Concurrent)
 
 set_target_properties(DeskBabel PROPERTIES
+    INSTALL_RPATH "\$ORIGIN/lib"
     MACOSX_BUNDLE_GUI_IDENTIFIER DeskBabel
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
