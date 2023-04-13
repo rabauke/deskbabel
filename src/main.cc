@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QLocale>
@@ -11,13 +12,13 @@
 int main(int argc, char *argv[]) {
   using namespace Qt::Literals::StringLiterals;
 
-  const QVersionNumber applicationVersion(version_major, version_minor, version_patch);
+  const QVersionNumber application_version(version_major, version_minor, version_patch);
 
   QGuiApplication app(argc, argv);
   app.setApplicationName(u"DeskBabel"_s);
   app.setOrganizationName(u"Heiko Bauke"_s);
   app.setOrganizationDomain(u"heiko.bauke"_s);
-  app.setApplicationVersion(applicationVersion.toString());
+  app.setApplicationVersion(application_version.toString());
 
   QTranslator translator;
   const QStringList ui_languages{QLocale::system().uiLanguages()};
@@ -35,7 +36,7 @@ int main(int argc, char *argv[]) {
       &engine, &QQmlApplicationEngine::objectCreated, &app,
       [url](QObject *obj, const QUrl &obj_url) {
         if (obj == nullptr and url == obj_url)
-          QCoreApplication::exit(-1);
+          QCoreApplication::exit(EXIT_FAILURE);
       },
       Qt::QueuedConnection);
   engine.load(url);
