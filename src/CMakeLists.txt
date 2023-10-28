@@ -1,27 +1,24 @@
-set(TS_FILES i18n/DeskBabel_de_DE.ts)
-
-set(QML_FILES qml/main.qml)
-
-set(PROJECT_SOURCES
-    main.cpp
-    dictionary.hpp
-    dictionary.cpp
-    app_model.hpp
-    app_model.cpp
-    translations_list_model.hpp
-    translations_list_model.cpp
-    )
-
 configure_file(version.hpp.in version.hpp @ONLY)
 
-qt_add_executable(DeskBabel ${PROJECT_SOURCES})
+add_subdirectory(DeskBabelQuick)
 
-qt_add_translations(DeskBabel TS_FILES ${TS_FILES})
+qt_add_executable(DeskBabel main.cpp)
 
 target_compile_definitions(DeskBabel
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(DeskBabel PRIVATE Qt::Core Qt::Quick Qt::Concurrent)
+target_link_libraries(DeskBabel PRIVATE Qt::Core Qt::Quick)
 target_include_directories(DeskBabel PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
+qt_add_qml_module(DeskBabel
+    URI DeskBabelApp
+    VERSION 1.0
+    QML_FILES qml/main.qml
+    RESOURCES qtquickcontrols2.conf
+    NO_RESOURCE_TARGET_PATH
+    )
+
+qt_import_plugins(DeskBabel INCLUDE DeskBabelPlugin)
+
 
 set_target_properties(DeskBabel PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER DeskBabel
@@ -29,13 +26,7 @@ set_target_properties(DeskBabel PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     )
 
-qt_add_qml_module(DeskBabel
-    URI DeskBabelQuick
-    VERSION 1.0
-    QML_FILES ${QML_FILES}
-    RESOURCES qtquickcontrols2.conf
-    NO_RESOURCE_TARGET_PATH
-    )
+qt_add_translations(DeskBabel TS_FILES i18n/DeskBabel_de_DE.ts)
 
 install(TARGETS DeskBabel
     BUNDLE DESTINATION .
@@ -51,6 +42,7 @@ qt_generate_deploy_qml_app_script(
 )
 install(SCRIPT ${deploy_script})
 
+set(CPACK_GENERATOR TGZ)
 set(CPACK_PACKAGE_NAME "DeskBabel")
 # set(CPACK_PACKAGE_VENDOR "vendor")
 set(CPACK_VERBATIM_VARIABLES true)
