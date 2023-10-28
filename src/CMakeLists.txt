@@ -1,15 +1,6 @@
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-find_package(Qt6 COMPONENTS Core Quick LinguistTools Concurrent REQUIRED)
-qt_standard_project_setup()
-
 set(TS_FILES i18n/DeskBabel_de_DE.ts)
+
+set(QML_FILES qml/main.qml)
 
 set(PROJECT_SOURCES
     main.cpp
@@ -19,8 +10,6 @@ set(PROJECT_SOURCES
     app_model.cpp
     translations_list_model.hpp
     translations_list_model.cpp
-    qml/main.qml
-    ${TS_FILES}
     )
 
 configure_file(version.hpp.in version.hpp @ONLY)
@@ -32,6 +21,7 @@ qt_add_translations(DeskBabel TS_FILES ${TS_FILES})
 target_compile_definitions(DeskBabel
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(DeskBabel PRIVATE Qt::Core Qt::Quick Qt::Concurrent)
+target_include_directories(DeskBabel PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 set_target_properties(DeskBabel PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER DeskBabel
@@ -42,7 +32,7 @@ set_target_properties(DeskBabel PROPERTIES
 qt_add_qml_module(DeskBabel
     URI DeskBabelQuick
     VERSION 1.0
-    QML_FILES qml/main.qml
+    QML_FILES ${QML_FILES}
     RESOURCES qtquickcontrols2.conf
     NO_RESOURCE_TARGET_PATH
     )
