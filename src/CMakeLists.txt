@@ -2,7 +2,7 @@ configure_file(version.hpp.in version.hpp @ONLY)
 
 add_subdirectory(DeskBabelQuick)
 
-qt_add_executable(DeskBabel main.cpp)
+qt_add_executable(DeskBabel WIN32 main.cpp)
 
 target_compile_definitions(DeskBabel
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
@@ -19,7 +19,6 @@ qt_add_qml_module(DeskBabel
 
 qt_import_plugins(DeskBabel INCLUDE DeskBabelPlugin)
 
-
 set_target_properties(DeskBabel PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER DeskBabel
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -33,6 +32,8 @@ install(TARGETS DeskBabel
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
+set_property(INSTALL "bin/$<TARGET_FILE_NAME:DeskBabel>" PROPERTY CPACK_START_MENU_SHORTCUTS "DeskBabel")
+
 qt_generate_deploy_qml_app_script(
     TARGET DeskBabel
     OUTPUT_SCRIPT deploy_script
@@ -42,13 +43,13 @@ qt_generate_deploy_qml_app_script(
 )
 install(SCRIPT ${deploy_script})
 
-set(CPACK_GENERATOR TGZ)
+if(WIN32)
+    set(CPACK_GENERATOR ZIP WIX)
+else()
+    set(CPACK_GENERATOR TGZ)
+endif()
 set(CPACK_PACKAGE_NAME "DeskBabel")
 # set(CPACK_PACKAGE_VENDOR "vendor")
 set(CPACK_VERBATIM_VARIABLES true)
-set(CPACK_PACKAGE_VERSION_MAJOR 0)
-set(CPACK_PACKAGE_VERSION_MINOR 1)
-set(CPACK_PACKAGE_VERSION_PATCH 0)
-set(CPACK_PACKAGE_CONTACT Heiko Bauke)
 
 include(CPack)
