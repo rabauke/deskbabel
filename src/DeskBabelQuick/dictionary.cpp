@@ -147,7 +147,7 @@ QList<QPair<QString, QString>> dictionary::translate(
   std::stable_sort(indices.begin(), indices.end(), [&](const int a, const int b) -> bool {
     return (scores[a] == scores[b])
                ? (QString::compare(QString(dict_a[hits[a]]), QString(dict_a[hits[b]]),
-                                   Qt::CaseInsensitive) <= 0)
+                                   Qt::CaseInsensitive) < 0)
                : (scores[a] > scores[b]);
   });
   // generate sorted results
