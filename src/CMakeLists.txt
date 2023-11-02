@@ -43,13 +43,24 @@ qt_generate_deploy_qml_app_script(
 )
 install(SCRIPT ${deploy_script})
 
-if(WIN32)
-    set(CPACK_GENERATOR ZIP WIX)
+if(CMAKE_SYSTEM_NAME MATCHES Linux)
+  if(RPMBUILD_FOUND)
+    set(CPACK_GENERATOR "TGZ;DEB;RPM")
+  else()
+    set(CPACK_GENERATOR "TGZ;DEB")
+  endif()
+elseif(CMAKE_SYSTEM_NAME MATCHES Windows)
+  set(CPACK_GENERATOR "ZIP;WIX")
 else()
-    set(CPACK_GENERATOR TGZ)
+  set(CPACK_GENERATOR "ZIP")
 endif()
-set(CPACK_PACKAGE_NAME "DeskBabel")
-# set(CPACK_PACKAGE_VENDOR "vendor")
+
+configure_file(CPackProjectConfig.txt.in CPackProjectConfig.txt)
+set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/CPackProjectConfig.txt")
+
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Heiko Bauke")
+
+set(CPACK_PACKAGE_NAME "${CMAKE_PROJECT_NAME}")
 set(CPACK_VERBATIM_VARIABLES true)
 
 include(CPack)
