@@ -25,8 +25,8 @@ public:
   // gives the size of the model
   Q_PROPERTY(int count READ count NOTIFY countChanged)
 
-  Q_INVOKABLE void translate(const QString &query);
-  Q_INVOKABLE void clear();
+  void translate(const QString &query);
+  void clear();
 
 signals:
   void countChanged(int);
