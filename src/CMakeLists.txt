@@ -3,6 +3,7 @@ configure_file(version.hpp.in version.hpp @ONLY)
 add_subdirectory(DeskBabelQuick)
 
 qt_add_executable(DeskBabel WIN32 main.cpp)
+add_dependencies(DeskBabel DeskBabelPlugin)
 
 target_compile_definitions(DeskBabel
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
