@@ -39,18 +39,36 @@ ApplicationWindow {
         id: menuBar
         Menu {
             id: fileMenu
-            title: qsTr("File")
+            title: qsTr('File')
 
             MenuItem {
                 enabled: application.dictionaryReady
-                text: qsTr("Load dictionary")
+                text: qsTr('Load dictionary')
 
                 onTriggered: fileDialog.open()
             }
             MenuItem {
-                text: qsTr("Close")
+                text: qsTr('Close')
 
                 onTriggered: root.close()
+            }
+        }
+        Menu {
+            id: dirMenu
+            title: qsTr('Translation direction')
+            enabled: application.dictionaryReady
+
+            MenuItem {
+                text: application.translationDirection0 + (application.translationDirection === AppModel.TranslationDirection.bidirectional ? '  ✓' : '')
+                onTriggered: application.translationDirection = AppModel.TranslationDirection.bidirectional;
+            }
+            MenuItem {
+                text: application.translationDirection1 + (application.translationDirection === AppModel.TranslationDirection.lang_a_to_b ? '  ✓' : '')
+                onTriggered: application.translationDirection = AppModel.TranslationDirection.lang_a_to_b;
+            }
+            MenuItem {
+                text: application.translationDirection2 + (application.translationDirection === AppModel.TranslationDirection.lang_b_to_a ? '  ✓' : '')
+                onTriggered: application.translationDirection = AppModel.TranslationDirection.lang_b_to_a;
             }
         }
     }

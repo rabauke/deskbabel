@@ -15,6 +15,12 @@ private:
   static constexpr int category = Qt::UserRole + 2;
 
 public:
+  enum class translation_direction : int {
+    lang_a_to_b = 1,
+    lang_b_to_a = 2,
+    bidirectional = 3
+  };
+
   explicit translations_list_model(QObject *other = nullptr);
   explicit translations_list_model(const dictionary &dict);
   virtual ~translations_list_model() = default;
@@ -22,10 +28,8 @@ public:
   [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
   [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
 
-  // gives the size of the model
-  Q_PROPERTY(int count READ count NOTIFY countChanged)
-
-  void translate(const QString &query);
+  void translate(const QString &query, translation_direction direction);
+  [[nodiscard]] QString get_translation_direction(translation_direction dir) const;
   void clear();
 
 signals:
@@ -35,8 +39,6 @@ protected:
   QHash<int, QByteArray> roleNames() const override;
 
 private:
-  int count() const;
-
   struct translation_type {
     QString source;
     QString translation;

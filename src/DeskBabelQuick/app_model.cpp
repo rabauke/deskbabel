@@ -67,7 +67,24 @@ void app_model::loadDefaultDictionary() {
 
 
 void app_model::set_query_string(const QString& query_string) {
-  query_string_ = query_string;
-  translations_->translate(query_string_);
-  emit translationsChanged();
+  if (query_string_ != query_string) {
+    query_string_ = query_string;
+    translations_list_model::translation_direction dir(
+        static_cast<translations_list_model::translation_direction>(translation_direction_));
+    translations_->translate(query_string_, dir);
+    emit translationsChanged();
+  }
+}
+
+
+void app_model::set_translation_direction(
+    app_model::TranslationDirection new_translation_direction) {
+  if (translation_direction_ != new_translation_direction) {
+    translation_direction_ = new_translation_direction;
+    translations_list_model::translation_direction dir(
+        static_cast<translations_list_model::translation_direction>(translation_direction_));
+    translations_->translate(query_string_, dir);
+    emit translationsChanged();
+    emit translationDirectionChanged();
+  }
 }
