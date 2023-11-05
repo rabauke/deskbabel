@@ -2,7 +2,18 @@ configure_file(version.hpp.in version.hpp @ONLY)
 
 add_subdirectory(DeskBabelQuick)
 
-qt_add_executable(DeskBabel WIN32 main.cpp)
+if(WIN32)
+  include(generate_windows_product_version)
+  generate_windows_product_version(PRODUCT_VERSION_FILES
+      NAME ${CMAKE_PROJECT_NAME}
+      COMPANY_NAME "Heiko Bauke"
+      ORIGINAL_FILENAME "DeskBabel.exe"
+      ICON ${CMAKE_SOURCE_DIR}/media/icon.ico)
+else()
+  set(${PRODUCT_VERSION_FILES} "")
+endif()
+
+qt_add_executable(DeskBabel WIN32 main.cpp ${PRODUCT_VERSION_FILES})
 add_dependencies(DeskBabel DeskBabelPlugin)
 
 target_compile_definitions(DeskBabel
@@ -16,7 +27,7 @@ qt_add_qml_module(DeskBabel
     QML_FILES qml/main.qml
     RESOURCES qtquickcontrols2.conf
     NO_RESOURCE_TARGET_PATH
-    )
+)
 
 qt_import_plugins(DeskBabel INCLUDE DeskBabelPlugin)
 
@@ -24,7 +35,7 @@ set_target_properties(DeskBabel PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER DeskBabel
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    )
+)
 
 qt_add_translations(DeskBabel TS_FILES i18n/DeskBabel_de_DE.ts)
 
@@ -60,6 +71,9 @@ configure_file(CPackProjectConfig.txt.in CPackProjectConfig.txt)
 set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/CPackProjectConfig.txt")
 
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Heiko Bauke")
+
+set(CPACK_WIX_PRODUCT_ICON ${CMAKE_SOURCE_DIR}/media/icon.ico)
+set(CPACK_WIX_UPGRADE_GUID "82069035-A440-4090-9C65-B317D1AEF42C")
 
 set(CPACK_PACKAGE_NAME "${CMAKE_PROJECT_NAME}")
 set(CPACK_VERBATIM_VARIABLES true)
