@@ -15,7 +15,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES GNU)
   # turn on (almost) all compiler warnings and treat them as errors
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror")
   # enable STL bound checks in debug builds
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_ASSERTIONS")
 elseif(CMAKE_CXX_COMPILER_ID MATCHES MSVC)
   # turn on (almost) all compiler warnings and treat them as errors
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive- /W4 /WX")
