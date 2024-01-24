@@ -1,10 +1,10 @@
-#include "dictionary.hpp"
+#include "Dictionary.hpp"
 #include <QFile>
 #include <QSet>
 #include <QRegularExpression>
 
 
-void dictionary::read(const QString &filename) {
+void Dictionary::read(const QString &filename) {
   clear();
   QFile file(filename);
   if (not file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -15,8 +15,8 @@ void dictionary::read(const QString &filename) {
       QRegularExpression rx("^# ([A-Z][A-Z])-([A-Z][A-Z]) ");
       auto match{rx.match(line)};
       if (match.hasMatch()) {
-        language_a_ = match.captured(1);
-        language_b_ = match.captured(2);
+        m_language_a = match.captured(1);
+        m_language_b = match.captured(2);
       }
       continue;
     }
@@ -29,56 +29,56 @@ void dictionary::read(const QString &filename) {
       entry_a.remove(0, 3);
     if (entry_b.startsWith("to "))
       entry_b.remove(0, 3);
-    dict_a_.push_back(entry_a.toUtf8());
-    dict_a_.back().squeeze();
-    dict_b_.push_back(entry_b.toUtf8());
-    dict_b_.back().squeeze();
+    m_dict_a.push_back(entry_a.toUtf8());
+    m_dict_a.back().squeeze();
+    m_dict_b.push_back(entry_b.toUtf8());
+    m_dict_b.back().squeeze();
     const QString entry_plain_a{purify(entry_a)};
     const QString entry_plain_b{purify(entry_b)};
     for (const auto &v : entry_plain_a.split(' ', Qt::SkipEmptyParts)) {
       QByteArray word{v.toUtf8()};
       word.squeeze();
-      map_a_.insert(word, dict_a_.size() - 1);
+      m_map_a.insert(word, m_dict_a.size() - 1);
     }
     for (const auto &v : entry_plain_b.split(' ', Qt::SkipEmptyParts)) {
       QByteArray word{v.toUtf8()};
       word.squeeze();
-      map_b_.insert(word, dict_b_.size() - 1);
+      m_map_b.insert(word, m_dict_b.size() - 1);
     }
   }
-  dict_a_.squeeze();
-  dict_b_.squeeze();
-  if (dict_a_.empty() or dict_b_.empty())
+  m_dict_a.squeeze();
+  m_dict_b.squeeze();
+  if (m_dict_a.empty() or m_dict_b.empty())
     throw std::runtime_error("empty dictionary");
 }
 
 
-qsizetype dictionary::size() const {
-  return dict_a_.size();
+qsizetype Dictionary::size() const {
+  return m_dict_a.size();
 }
 
 
-void dictionary::clear() {
-  dict_a_.clear();
-  dict_b_.clear();
-  map_a_.clear();
-  map_b_.clear();
-  language_a_.clear();
-  language_b_.clear();
+void Dictionary::clear() {
+  m_dict_a.clear();
+  m_dict_b.clear();
+  m_map_a.clear();
+  m_map_b.clear();
+  m_language_a.clear();
+  m_language_b.clear();
 }
 
 
-QList<QPair<QString, QString>> dictionary::translate_a_to_b(const QString &query) const {
-  return translate(query, dict_a_, dict_b_, map_a_);
+QList<QPair<QString, QString>> Dictionary::translate_a_to_b(const QString &query) const {
+  return translate(query, m_dict_a, m_dict_b, m_map_a);
 }
 
 
-QList<QPair<QString, QString>> dictionary::translate_b_to_a(const QString &query) const {
-  return translate(query, dict_b_, dict_a_, map_b_);
+QList<QPair<QString, QString>> Dictionary::translate_b_to_a(const QString &query) const {
+  return translate(query, m_dict_b, m_dict_a, m_map_b);
 }
 
 
-QList<QPair<QString, QString>> dictionary::translate(
+QList<QPair<QString, QString>> Dictionary::translate(
     const QString &query, const QVector<QByteArray> &dict_a, const QVector<QByteArray> &dict_b,
     const QMultiMap<QByteArray, int> &map_a) const {
   // remove non-letters from query and split into single words
@@ -94,7 +94,7 @@ QList<QPair<QString, QString>> dictionary::translate(
            (i.key() == query_list[0] or QString(i.key()).startsWith(QString(query_list[0])))) {
       results.insert(*i);
       ++i;
-      if (results.size() >= 4 * max_num_results_)
+      if (results.size() >= 4 * m_max_num_results)
         break;
     }
   }
@@ -107,7 +107,7 @@ QList<QPair<QString, QString>> dictionary::translate(
       ++i;
     }
     results.intersect(further_results);
-    if (results.size() >= 4 * max_num_results_)
+    if (results.size() >= 4 * m_max_num_results)
       break;
   }
   // calculate scores for each match
@@ -154,14 +154,14 @@ QList<QPair<QString, QString>> dictionary::translate(
   QList<QPair<QString, QString>> result;
   for (auto i : indices) {
     result.append({dict_a[hits[i]], dict_b[hits[i]]});
-    if (result.size() == max_num_results_)
+    if (result.size() == m_max_num_results)
       break;
   }
   return result;
 }
 
 
-QString dictionary::purify(const QString &entry) {
+QString Dictionary::purify(const QString &entry) {
   QString plain;
   plain.reserve(entry.size());
   bool in_word_mode{true};

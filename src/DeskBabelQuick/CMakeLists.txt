@@ -7,12 +7,12 @@ qt_add_qml_module(DeskBabelPlugin
 )
 
 target_sources(DeskBabelPlugin PRIVATE
-    dictionary.hpp
-    dictionary.cpp
-    app_model.hpp
-    app_model.cpp
-    translations_list_model.hpp
-    translations_list_model.cpp
+    Dictionary.hpp
+    Dictionary.cpp
+    AppModel.hpp
+    AppModel.cpp
+    TranslationsListModel.hpp
+    TranslationsListModel.cpp
 )
 
 target_compile_definitions(DeskBabelPlugin

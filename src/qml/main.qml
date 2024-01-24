@@ -30,8 +30,9 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 elide: Label.ElideRight
                 horizontalAlignment: Qt.AlignLeft
-                text: qsTr('Dictionary size: %1 translations').arg(Number(application.dictionarySize).toLocaleString(Qt.locale(), 'f', 0))
+                text: qsTr('%1: %2 translations').arg(application.currentDictionaryFile).arg(Number(application.dictionarySize).toLocaleString(Qt.locale(), 'f', 0))
                 verticalAlignment: Qt.AlignVCenter
+                visible: application.dictionaryReady
             }
         }
     }
@@ -184,7 +185,7 @@ ApplicationWindow {
     }
     FileDialog {
         id: fileDialog
-        currentFolder: application.currentFolder
+        currentFolder: application.currentDictionaryFile
         modality: Qt.WindowModal
         title: qsTr('Please choose a dictionary')
 

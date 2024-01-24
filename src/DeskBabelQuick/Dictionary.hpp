@@ -1,5 +1,4 @@
-#ifndef DICTIONARY_HPP
-#define DICTIONARY_HPP
+#pragma once
 
 #include <QObject>
 #include <QThread>
@@ -10,29 +9,30 @@
 #include <QMultiMap>
 #include <QVariantList>
 
-class dictionary;
 
-class dictionary {
-  QVector<QByteArray> dict_a_;
-  QVector<QByteArray> dict_b_;
-  QMultiMap<QByteArray, int> map_a_;
-  QMultiMap<QByteArray, int> map_b_;
-  QString language_a_;
-  QString language_b_;
-  const int max_num_results_{200};
+class Dictionary;
 
-  friend class dictionary_loader;
+class Dictionary {
+  QVector<QByteArray> m_dict_a;
+  QVector<QByteArray> m_dict_b;
+  QMultiMap<QByteArray, int> m_map_a;
+  QMultiMap<QByteArray, int> m_map_b;
+  QString m_language_a;
+  QString m_language_b;
+  static constexpr int m_max_num_results = 200;
+
+  friend class DictionaryLoader;
 
 public:
-  dictionary() = default;
+  Dictionary() = default;
   void read(const QString &filename);
   [[nodiscard]] qsizetype size() const;
   void clear();
-  [[nodiscard]] bool dict_empty() const { return dict_a_.empty() or dict_b_.empty(); }
+  [[nodiscard]] bool dict_empty() const { return m_dict_a.empty() or m_dict_b.empty(); }
   [[nodiscard]] QList<QPair<QString, QString>> translate_a_to_b(const QString &query) const;
   [[nodiscard]] QList<QPair<QString, QString>> translate_b_to_a(const QString &query) const;
-  [[nodiscard]] QString language_a() const { return language_a_; }
-  [[nodiscard]] QString language_b() const { return language_b_; }
+  [[nodiscard]] QString language_a() const { return m_language_a; }
+  [[nodiscard]] QString language_b() const { return m_language_b; }
 
 private:
   [[nodiscard]] QList<QPair<QString, QString>> translate(
@@ -41,5 +41,3 @@ private:
 
   static QString purify(const QString &entry);
 };
-
-#endif  // DICTIONARY_HPP
