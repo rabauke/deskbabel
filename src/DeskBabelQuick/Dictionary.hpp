@@ -10,15 +10,22 @@
 #include <QVariantList>
 
 
-class Dictionary;
+class Dictionary : public QObject {
+  Q_OBJECT
 
-class Dictionary {
+  enum class Language : int {
+    unknown,
+    en  // English
+  };
+
   QVector<QByteArray> m_dict_a;
   QVector<QByteArray> m_dict_b;
   QMultiMap<QByteArray, int> m_map_a;
   QMultiMap<QByteArray, int> m_map_b;
   QString m_language_a;
   QString m_language_b;
+  Language m_language_kind_a{Language::unknown};
+  Language m_language_kind_b{Language::unknown};
   static constexpr int m_max_num_results = 200;
 
   friend class DictionaryLoader;
@@ -34,10 +41,14 @@ public:
   [[nodiscard]] QString language_a() const { return m_language_a; }
   [[nodiscard]] QString language_b() const { return m_language_b; }
 
+signals:
+  void entrieLoaded(qsizetype number_of_entries);
+
 private:
   [[nodiscard]] QList<QPair<QString, QString>> translate(
       const QString &query, const QVector<QByteArray> &dict_a,
-      const QVector<QByteArray> &dict_b, const QMultiMap<QByteArray, int> &map_a) const;
+      const QVector<QByteArray> &dict_b, const QMultiMap<QByteArray, int> &map_a,
+      Language language_kind_a) const;
 
-  static QString purify(const QString &entry);
+  static QString purify(QString entry, Language language);
 };

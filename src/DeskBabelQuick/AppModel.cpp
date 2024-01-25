@@ -18,35 +18,60 @@ AppModel::AppModel(QObject* parent)
     if (not folders.isEmpty())
       m_current_folder = QUrl::fromLocalFile(folders[0]);
   }
+
+  const QVariant auto_load_dictionary{settings.value("autoLoadDictionary")};
+  if (auto_load_dictionary.canConvert<bool>())
+    m_auto_load_dictionary = auto_load_dictionary.toBool();
+}
+
+
+AppModel::~AppModel() {
+  QSettings settings;
+  settings.setValue("dictionary", m_current_dictionary_file);
+  settings.setValue("autoLoadDictionary", m_auto_load_dictionary);
+}
+
+
+void AppModel::set_auto_load_dictionary(bool auto_load_dictionary) {
+  if (auto_load_dictionary != m_auto_load_dictionary) {
+    m_auto_load_dictionary = auto_load_dictionary;
+    emit autoLoadDictionaryChanged();
+  }
 }
 
 
 void AppModel::loadDictionary(const QUrl& filename) {
   if (not m_read_dictionary_future.isRunning()) {
-    m_dictionary_ready = false;
-    emit dictionaryReadyChanged();
+    m_dictionary_state = DictionaryState::loading;
+    m_current_folder = filename.adjusted(QUrl::RemoveFilename);
+    m_current_dictionary_file = filename;
+    emit dictionaryStateChanged();
+    emit currentFolderChanged();
+    emit currentDictionaryFileChanged();
+
+    connect(&m_dictionary, &Dictionary::entrieLoaded, this, [this](qsizetype n) {
+      m_dictionary_size = n;
+      emit dictionarySizeChanged();
+    });
 
     auto read_dictionary_worker{[this](const QUrl& filename) {
       try {
         m_dictionary.read(filename.toLocalFile());
-        QSettings settings;
-        settings.setValue("dictionary", filename);
-        m_current_folder = filename.adjusted(QUrl::RemoveFilename);
-        m_current_dictionary_file = filename;
       } catch (...) {
         m_dictionary.clear();
+        return false;
       }
+      return true;
     }};
 
     m_read_dictionary_future = QtConcurrent::run(read_dictionary_worker, filename);
-    auto* watcher{new QFutureWatcher<void>()};
-    connect(watcher, &QFutureWatcher<void>::finished, this, [this, watcher]() {
-      m_dictionary_ready = true;
+    auto* watcher{new QFutureWatcher<bool>()};
+    connect(watcher, &QFutureWatcher<bool>::finished, this, [this, watcher]() {
+      disconnect(&m_dictionary, nullptr, this, nullptr);
+      m_dictionary_state = watcher->result() ? DictionaryState::ready : DictionaryState::error;
       m_dictionary_size = m_dictionary.size();
-      emit dictionaryReadyChanged();
+      emit dictionaryStateChanged();
       emit dictionarySizeChanged();
-      emit currentFolderChanged();
-      emit currentDictionaryFileChanged();
       delete watcher;
     });
     watcher->setFuture(m_read_dictionary_future);
@@ -59,12 +84,6 @@ void AppModel::loadDefaultDictionary() {
   const QVariant dictionary{settings.value("dictionary")};
   if (dictionary.canConvert<QUrl>())
     loadDictionary(dictionary.toUrl());
-  else {
-    m_dictionary_ready = true;
-    m_dictionary_size = m_dictionary.size();
-    emit dictionaryReadyChanged();
-    emit dictionarySizeChanged();
-  }
 }
 
 

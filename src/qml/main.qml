@@ -6,6 +6,13 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 import DeskBabelQuick
 
+
+// qsTr('%1: %2 translations').arg(application.currentDictionaryFileName).arg(Number(application.dictionarySize).toLocaleString(Qt.locale(), 'f', 0)) :
+// ((application.dictionaryState === AppModel.DictionaryState.error) ?
+//     qsTr('Error loading dictionary “%1”.').arg(application.currentDictionaryFileName) :
+//     qsTr('No dictionary loaded.'))
+
+
 ApplicationWindow {
     id: root
 
@@ -30,9 +37,11 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 elide: Label.ElideRight
                 horizontalAlignment: Qt.AlignLeft
-                text: qsTr('%1: %2 translations').arg(application.currentDictionaryFile).arg(Number(application.dictionarySize).toLocaleString(Qt.locale(), 'f', 0))
+                text: (application.dictionaryReady || application.dictionaryLoading) ? qsTr('%1: %2 translations').arg(application.currentDictionaryFileName).arg(Number(application.dictionarySize).toLocaleString(Qt.locale(), 'f', 0)) :
+                    ((application.dictionaryError) ?
+                        qsTr('Error loading dictionary “%1”.').arg(application.currentDictionaryFileName) :
+                        qsTr('No dictionary loaded.'))
                 verticalAlignment: Qt.AlignVCenter
-                visible: application.dictionaryReady
             }
         }
     }
@@ -43,14 +52,18 @@ ApplicationWindow {
             title: qsTr('File')
 
             MenuItem {
-                enabled: application.dictionaryReady
+                enabled: !application.dictionaryLoading
                 text: qsTr('Load dictionary')
-
                 onTriggered: fileDialog.open()
             }
             MenuItem {
+                text: qsTr('Auto-load dictionary at program start-up')
+                checkable: true
+                checked: application.autoLoadDictionary
+                onTriggered: application.autoLoadDictionary = checked
+            }
+            MenuItem {
                 text: qsTr('Close')
-
                 onTriggered: root.close()
             }
         }
@@ -60,22 +73,32 @@ ApplicationWindow {
             enabled: application.dictionaryReady
 
             MenuItem {
-                text: application.translationDirection0 + (application.translationDirection === AppModel.TranslationDirection.bidirectional ? '  ✓' : '')
-                onTriggered: application.translationDirection = AppModel.TranslationDirection.bidirectional;
+                text: application.translationDirection0
+                checkable: true
+                enabled: application.translationDirection !== AppModel.TranslationDirection.bidirectional
+                checked: application.translationDirection === AppModel.TranslationDirection.bidirectional
+                onTriggered: application.translationDirection = AppModel.TranslationDirection.bidirectional
             }
             MenuItem {
-                text: application.translationDirection1 + (application.translationDirection === AppModel.TranslationDirection.lang_a_to_b ? '  ✓' : '')
-                onTriggered: application.translationDirection = AppModel.TranslationDirection.lang_a_to_b;
+                text: application.translationDirection1
+                checkable: true
+                enabled: application.translationDirection !== AppModel.TranslationDirection.lang_a_to_b
+                checked: application.translationDirection === AppModel.TranslationDirection.lang_a_to_b
+                onTriggered: application.translationDirection = AppModel.TranslationDirection.lang_a_to_b
             }
             MenuItem {
-                text: application.translationDirection2 + (application.translationDirection === AppModel.TranslationDirection.lang_b_to_a ? '  ✓' : '')
-                onTriggered: application.translationDirection = AppModel.TranslationDirection.lang_b_to_a;
+                text: application.translationDirection2
+                checkable: true
+                enabled: application.translationDirection !== AppModel.TranslationDirection.lang_b_to_a
+                checked: application.translationDirection === AppModel.TranslationDirection.lang_b_to_a
+                onTriggered: application.translationDirection = AppModel.TranslationDirection.lang_b_to_a
             }
         }
     }
 
     Component.onCompleted: {
-        application.loadDefaultDictionary();
+        if (application.autoLoadDictionary)
+            application.loadDefaultDictionary();
     }
 
     AppModel {
@@ -181,7 +204,7 @@ ApplicationWindow {
     }
     BusyIndicator {
         anchors.centerIn: parent
-        running: !application.dictionaryReady
+        running: application.dictionaryLoading
     }
     FileDialog {
         id: fileDialog

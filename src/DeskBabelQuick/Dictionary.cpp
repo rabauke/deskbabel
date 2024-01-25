@@ -9,14 +9,21 @@ void Dictionary::read(const QString &filename) {
   QFile file(filename);
   if (not file.open(QIODevice::ReadOnly | QIODevice::Text))
     throw std::runtime_error("cannot read file");
+
+  m_language_kind_a = Language::unknown;
+  m_language_kind_b = Language::unknown;
   while (!file.atEnd()) {
     const QString line{file.readLine()};
     if (line.startsWith('#')) {
-      QRegularExpression rx("^# ([A-Z][A-Z])-([A-Z][A-Z]) ");
+      QRegularExpression rx("^#\\s*([A-Z][A-Z])-([A-Z][A-Z])\\s*");
       auto match{rx.match(line)};
       if (match.hasMatch()) {
         m_language_a = match.captured(1);
+        if (m_language_a.compare("en", Qt::CaseInsensitive) == 0)
+          m_language_kind_a = Language::en;
         m_language_b = match.captured(2);
+        if (m_language_b.compare("en", Qt::CaseInsensitive) == 0)
+          m_language_kind_b = Language::en;
       }
       continue;
     }
@@ -25,16 +32,12 @@ void Dictionary::read(const QString &filename) {
       continue;
     QString entry_a{line_split[0]};
     QString entry_b{line_split[1]};
-    if (entry_a.startsWith("to "))
-      entry_a.remove(0, 3);
-    if (entry_b.startsWith("to "))
-      entry_b.remove(0, 3);
     m_dict_a.push_back(entry_a.toUtf8());
     m_dict_a.back().squeeze();
     m_dict_b.push_back(entry_b.toUtf8());
     m_dict_b.back().squeeze();
-    const QString entry_plain_a{purify(entry_a)};
-    const QString entry_plain_b{purify(entry_b)};
+    const QString entry_plain_a{purify(entry_a, m_language_kind_a)};
+    const QString entry_plain_b{purify(entry_b, m_language_kind_b)};
     for (const auto &v : entry_plain_a.split(' ', Qt::SkipEmptyParts)) {
       QByteArray word{v.toUtf8()};
       word.squeeze();
@@ -45,6 +48,8 @@ void Dictionary::read(const QString &filename) {
       word.squeeze();
       m_map_b.insert(word, m_dict_b.size() - 1);
     }
+    if (size() % 2357 == 0)
+      emit entrieLoaded(size());
   }
   m_dict_a.squeeze();
   m_dict_b.squeeze();
@@ -69,20 +74,22 @@ void Dictionary::clear() {
 
 
 QList<QPair<QString, QString>> Dictionary::translate_a_to_b(const QString &query) const {
-  return translate(query, m_dict_a, m_dict_b, m_map_a);
+  return translate(query, m_dict_a, m_dict_b, m_map_a, m_language_kind_a);
 }
 
 
 QList<QPair<QString, QString>> Dictionary::translate_b_to_a(const QString &query) const {
-  return translate(query, m_dict_b, m_dict_a, m_map_b);
+  return translate(query, m_dict_b, m_dict_a, m_map_b, m_language_kind_b);
 }
 
 
-QList<QPair<QString, QString>> Dictionary::translate(
-    const QString &query, const QVector<QByteArray> &dict_a, const QVector<QByteArray> &dict_b,
-    const QMultiMap<QByteArray, int> &map_a) const {
+QList<QPair<QString, QString>> Dictionary::translate(const QString &query,
+                                                     const QVector<QByteArray> &dict_a,
+                                                     const QVector<QByteArray> &dict_b,
+                                                     const QMultiMap<QByteArray, int> &map_a,
+                                                     Language language_kind_a) const {
   // remove non-letters from query and split into single words
-  QStringList query_list{purify(query).split(' ', Qt::SkipEmptyParts)};
+  QStringList query_list{purify(query, Language::unknown).split(' ', Qt::SkipEmptyParts)};
   // no results if no words in query
   if (query_list.empty())
     return {};
@@ -117,7 +124,7 @@ QList<QPair<QString, QString>> Dictionary::translate(
   // match contains this string, if yes increase score, in particular,
   // when match starts with this string
   for (int i{0}; i < hits.size(); ++i) {
-    QString plain{purify(dict_a[hits[i]])};
+    QString plain{purify(dict_a[hits[i]], language_kind_a)};
     QString prefix{query_list[0]};
     if (plain.startsWith(prefix)) {
       scores[i] += 6;
@@ -161,7 +168,12 @@ QList<QPair<QString, QString>> Dictionary::translate(
 }
 
 
-QString Dictionary::purify(const QString &entry) {
+QString Dictionary::purify(QString entry, Language language) {
+  if (language == Language::en) {
+    if (entry.startsWith("to "))
+      entry.remove(0, 3);
+  }
+
   QString plain;
   plain.reserve(entry.size());
   bool in_word_mode{true};

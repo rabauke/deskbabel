@@ -4,13 +4,19 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../qml/main.qml" line="+58"/>
+        <location filename="../qml/main.qml" line="+60"/>
+        <location/>
+        <source>Auto-load dictionary at program start-up</source>
+        <translation type="unfinished">Wörterbuch automatisch bei Programmstart laden</translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <location/>
         <source>Translation direction</source>
         <translation>Übersetzungsrichtung</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+45"/>
         <location/>
         <source>enter search</source>
         <translation>Suchbegriff</translation>
@@ -22,26 +28,41 @@
         <translation>Bitte ein Wörterbuch auswählen</translation>
     </message>
     <message>
-        <location line="-147"/>
+        <location line="-161"/>
         <location/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-12"/>
+        <location/>
+        <source>%1: %2 translations</source>
+        <translation>%1: %2 Übersetzungen</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Error loading dictionary “%1”.</source>
+        <translation>Fehler beim Laden von Wörterbuch „%1”.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location/>
+        <source>No dictionary loaded.</source>
+        <translation>Kein Wörterbuch geladen.</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <location/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location line="-5"/>
+        <location line="-10"/>
         <location/>
         <source>Load dictionary</source>
         <translation>Wörterbuch laden</translation>
     </message>
     <message>
-        <location line="-13"/>
-        <location/>
         <source>Dictionary size: %1 translations</source>
         <translation>Wörterbuchgröße: %1 Übersetzungen</translation>
     </message>
