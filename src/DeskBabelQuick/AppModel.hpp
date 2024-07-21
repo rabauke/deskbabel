@@ -17,10 +17,10 @@ public:
   explicit AppModel(QObject* parent = nullptr);
   ~AppModel();
 
-  enum TranslationDirection : int { lang_a_to_b = 1, lang_b_to_a = 2, bidirectional = 3 };
+  enum TranslationDirection : int { LangAtoB = 1, LangBtoA = 2, Bidirectional = 3 };
   Q_ENUM(TranslationDirection)
 
-  enum DictionaryState : int { not_loaded = 1, loading = 2, error = 3, ready = 4 };
+  enum DictionaryState : int { NotLoaded = 1, Loading = 2, Error = 3, Ready = 4 };
   Q_ENUM(DictionaryState)
 
   Q_INVOKABLE void loadDictionary(const QUrl& filename);
@@ -75,15 +75,15 @@ private:
     return m_translations.get();
   }
 
-  DictionaryState m_dictionary_state{DictionaryState::not_loaded};
-  [[nodiscard]] bool get_dictionary_loading() const { return m_dictionary_state == DictionaryState::loading; }
-  [[nodiscard]] bool get_dictionary_error() const { return m_dictionary_state == DictionaryState::error; }
-  [[nodiscard]] bool get_dictionary_ready() const { return m_dictionary_state == DictionaryState::ready; }
+  DictionaryState m_dictionary_state{DictionaryState::NotLoaded};
+  [[nodiscard]] bool get_dictionary_loading() const { return m_dictionary_state == DictionaryState::Loading; }
+  [[nodiscard]] bool get_dictionary_error() const { return m_dictionary_state == DictionaryState::Error; }
+  [[nodiscard]] bool get_dictionary_ready() const { return m_dictionary_state == DictionaryState::Ready; }
 
   qsizetype m_dictionary_size{0};
   [[nodiscard]] qsizetype get_dictionary_size() const { return m_dictionary_size; }
 
-  TranslationDirection m_translation_direction{TranslationDirection::bidirectional};
+  TranslationDirection m_translation_direction{TranslationDirection::Bidirectional};
   [[nodiscard]] TranslationDirection get_translation_direction() const {
     return m_translation_direction;
   }

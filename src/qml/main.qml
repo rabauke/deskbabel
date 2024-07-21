@@ -7,12 +7,6 @@ import QtQuick.Layouts
 import DeskBabelQuick
 
 
-// qsTr('%1: %2 translations').arg(application.currentDictionaryFileName).arg(Number(application.dictionarySize).toLocaleString(Qt.locale(), 'f', 0)) :
-// ((application.dictionaryState === AppModel.DictionaryState.error) ?
-//     qsTr('Error loading dictionary “%1”.').arg(application.currentDictionaryFileName) :
-//     qsTr('No dictionary loaded.'))
-
-
 ApplicationWindow {
     id: root
 
@@ -75,23 +69,23 @@ ApplicationWindow {
             MenuItem {
                 text: application.translationDirection0
                 checkable: true
-                enabled: application.translationDirection !== AppModel.TranslationDirection.bidirectional
-                checked: application.translationDirection === AppModel.TranslationDirection.bidirectional
-                onTriggered: application.translationDirection = AppModel.TranslationDirection.bidirectional
+                enabled: application.translationDirection !== AppModel.TranslationDirection.Bidirectional
+                checked: application.translationDirection === AppModel.TranslationDirection.Bidirectional
+                onTriggered: application.translationDirection = AppModel.TranslationDirection.Bidirectional
             }
             MenuItem {
                 text: application.translationDirection1
                 checkable: true
-                enabled: application.translationDirection !== AppModel.TranslationDirection.lang_a_to_b
-                checked: application.translationDirection === AppModel.TranslationDirection.lang_a_to_b
-                onTriggered: application.translationDirection = AppModel.TranslationDirection.lang_a_to_b
+                enabled: application.translationDirection !== AppModel.TranslationDirection.LangAtoB
+                checked: application.translationDirection === AppModel.TranslationDirection.LangAtoB
+                onTriggered: application.translationDirection = AppModel.TranslationDirection.LangAtoB
             }
             MenuItem {
                 text: application.translationDirection2
                 checkable: true
-                enabled: application.translationDirection !== AppModel.TranslationDirection.lang_b_to_a
-                checked: application.translationDirection === AppModel.TranslationDirection.lang_b_to_a
-                onTriggered: application.translationDirection = AppModel.TranslationDirection.lang_b_to_a
+                enabled: application.translationDirection !== AppModel.TranslationDirection.LangBtoA
+                checked: application.translationDirection === AppModel.TranslationDirection.LangBtoA
+                onTriggered: application.translationDirection = AppModel.TranslationDirection.LangBtoA
             }
         }
     }

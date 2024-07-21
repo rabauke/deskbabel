@@ -42,7 +42,7 @@ void AppModel::set_auto_load_dictionary(bool auto_load_dictionary) {
 
 void AppModel::loadDictionary(const QUrl& filename) {
   if (not m_read_dictionary_future.isRunning()) {
-    m_dictionary_state = DictionaryState::loading;
+    m_dictionary_state = DictionaryState::Loading;
     m_current_folder = filename.adjusted(QUrl::RemoveFilename);
     m_current_dictionary_file = filename;
     emit dictionaryStateChanged();
@@ -68,7 +68,7 @@ void AppModel::loadDictionary(const QUrl& filename) {
     auto* watcher{new QFutureWatcher<bool>()};
     connect(watcher, &QFutureWatcher<bool>::finished, this, [this, watcher]() {
       disconnect(&m_dictionary, nullptr, this, nullptr);
-      m_dictionary_state = watcher->result() ? DictionaryState::ready : DictionaryState::error;
+      m_dictionary_state = watcher->result() ? DictionaryState::Ready : DictionaryState::Error;
       m_dictionary_size = m_dictionary.size();
       emit dictionaryStateChanged();
       emit dictionarySizeChanged();
