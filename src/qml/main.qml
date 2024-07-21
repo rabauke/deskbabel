@@ -69,23 +69,23 @@ ApplicationWindow {
             MenuItem {
                 text: application.translationDirection0
                 checkable: true
-                enabled: application.translationDirection !== AppModel.TranslationDirection.Bidirectional
-                checked: application.translationDirection === AppModel.TranslationDirection.Bidirectional
-                onTriggered: application.translationDirection = AppModel.TranslationDirection.Bidirectional
+                enabled: application.translationDirection !== AppModel.Bidirectional
+                checked: application.translationDirection === AppModel.Bidirectional
+                onTriggered: application.translationDirection = AppModel.Bidirectional
             }
             MenuItem {
                 text: application.translationDirection1
                 checkable: true
-                enabled: application.translationDirection !== AppModel.TranslationDirection.LangAtoB
-                checked: application.translationDirection === AppModel.TranslationDirection.LangAtoB
-                onTriggered: application.translationDirection = AppModel.TranslationDirection.LangAtoB
+                enabled: application.translationDirection !== AppModel.LangAtoB
+                checked: application.translationDirection === AppModel.LangAtoB
+                onTriggered: application.translationDirection = AppModel.LangAtoB
             }
             MenuItem {
                 text: application.translationDirection2
                 checkable: true
-                enabled: application.translationDirection !== AppModel.TranslationDirection.LangBtoA
-                checked: application.translationDirection === AppModel.TranslationDirection.LangBtoA
-                onTriggered: application.translationDirection = AppModel.TranslationDirection.LangBtoA
+                enabled: application.translationDirection !== AppModel.LangBtoA
+                checked: application.translationDirection === AppModel.LangBtoA
+                onTriggered: application.translationDirection = AppModel.LangBtoA
             }
         }
     }
