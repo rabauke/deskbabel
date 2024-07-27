@@ -202,7 +202,7 @@ ApplicationWindow {
     }
     FileDialog {
         id: fileDialog
-        currentFolder: application.currentDictionaryFile
+        currentFolder: application.currentFolder
         modality: Qt.WindowModal
         title: qsTr('Please choose a dictionary')
 
